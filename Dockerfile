@@ -3,14 +3,17 @@ FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y \
-    python3-opencv ca-certificates python3-dev python3-pip python-setuptools git wget sudo ninja-build libsm6 libxext6 libxrender-dev
+    python3-opencv ca-certificates python3-dev python3-pip python-setuptools git wget sudo ninja-build libsm6 libxext6 libxrender-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN ln -sv /usr/bin/python3 /usr/bin/python
 RUN pip3 install --upgrade pip setuptools wheel
 
 
 # create a non-root user
 ARG USER_ID=1000
-RUN useradd -m --no-log-init --system  --uid ${USER_ID} appuser -g sudo
+RUN useradd -m --no-log-init --system --uid ${USER_ID} appuser -g sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER appuser
 WORKDIR /home/appuser
@@ -43,5 +46,10 @@ WORKDIR /home/appuser/detectron2_repo
 # wget http://images.cocodataset.org/val2017/000000439715.jpg -O input.jpg
 # python3 demo/demo.py  \
 #--config-file configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml \
-#--input input.jpg --output outputs/ \
+#--input input.jpg \
 #--opts MODEL.WEIGHTS detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl
+
+WORKDIR /home/appuser/app
+COPY --chown=1000 ./src/ ./src
+COPY --chown=1000 ./data/ ./data
+RUN mkdir result

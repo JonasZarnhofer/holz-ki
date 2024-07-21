@@ -1,6 +1,6 @@
-version: "2.3"
 services:
   detectron2:
+    tty: true
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,7 +11,7 @@ services:
         reservations:
           devices:
             - capabilities:
-              - gpu
+                - gpu
     shm_size: "8gb"
     ulimits:
       memlock: -1
@@ -19,6 +19,9 @@ services:
     volumes:
       - $HOME/.torch/fvcore_cache:/tmp:rw
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - result:/home/appuser/app/result
     environment:
       - DISPLAY=$DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
+volumes:
+  result:
