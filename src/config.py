@@ -1,6 +1,9 @@
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 from detectron2.data.datasets import register_coco_instances, load_coco_json
+
+from mapper import CustomDatasetMapper
+
 import os
 
 
@@ -31,7 +34,7 @@ def custom_config():
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = (
         128  # faster, and good enough for this toy dataset
     )
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 7  # 3 classes (data, fig, hazelnut)
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 7
 
     cfg.OUTPUT_DIR = "result/model"
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
